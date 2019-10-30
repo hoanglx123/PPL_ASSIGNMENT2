@@ -37,7 +37,6 @@ varDeclare:     varType manyVar SM;
 varType:        BOOLTYPE | INTTYPE | FLOATTYPE | STRINGTYPE ; 
 manyVar:        var (CM var)* ;
 var:            IDENTIFIER (LQB INTLIT RQB)? ;
-empty: ;
 
 // Function declearation
 funcDeclare:    returnType IDENTIFIER LB paramDeclare RB blockStatement;
@@ -58,8 +57,7 @@ statement:      assignment
               ;
 
 assignment:     IDENTIFIER ASSOP expr SM; 
-callStatement:  callExpr SM;
-callExpr:       IDENTIFIER LB listExpr? RB;
+callStatement:  IDENTIFIER LB listExpr? RB SM;
 listExpr:       expr (CM expr)*;
 returnFunc:     KEYWORD_RETURN  expr SM; 
 

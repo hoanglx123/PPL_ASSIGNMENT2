@@ -39,11 +39,6 @@ class MCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#empty.
-    def visitEmpty(self, ctx:MCParser.EmptyContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by MCParser#funcDeclare.
     def visitFuncDeclare(self, ctx:MCParser.FuncDeclareContext):
         return self.visitChildren(ctx)
@@ -91,11 +86,6 @@ class MCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MCParser#callStatement.
     def visitCallStatement(self, ctx:MCParser.CallStatementContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MCParser#callExpr.
-    def visitCallExpr(self, ctx:MCParser.CallExprContext):
         return self.visitChildren(ctx)
 
 
