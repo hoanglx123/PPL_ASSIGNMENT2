@@ -29,8 +29,9 @@ options{
 /***************************************/
 /************ Parser *******************/
 /***************************************/
-program:        manyDecls EOF; 
-manyDecls:      (varDeclare | funcDeclare)+;
+// program:        manyDecls EOF; 
+// manyDecls:      (varDeclare | funcDeclare)+;
+program: varDeclare; 
 
 // Variable declearation 
 varDeclare:     varType manyVar SM;

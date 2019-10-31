@@ -5,17 +5,20 @@ from AST import *
 class ASTGeneration(MCVisitor):
      # Visit a parse tree produced by MCParser#program.
     def visitProgram(self, ctx:MCParser.ProgramContext):
-        return self.visit(ctx.manyDecls())
-
-
-    # Visit a parse tree produced by MCParser#manyDecls.
-    def visitManyDecls(self, ctx:MCParser.ManyDeclsContext):
-        return None
+        return Program(self.visit(ctx.varDeclare()))
 
 
     # Visit a parse tree produced by MCParser#varDeclare.
     def visitVarDeclare(self, ctx:MCParser.VarDeclareContext):
-        return None
+        result = []
+        for varNode in self.visit(ctx.manyVar()):
+            # Basic type 
+            if self.visit(varNode)[1] == -1: 
+                result.append(VarDecl(self.visit(varNode)[0], self.visit(ctx.varType())))   
+            # Array type
+            else: 
+                result.append(ArrayType(self.visit(ctx.varType()), self.visit(varNode)[1]))
+        return result 
 
 
     # Visit a parse tree produced by MCParser#varType.
@@ -27,16 +30,25 @@ class ASTGeneration(MCVisitor):
         elif ctx.FLOATTYPE():
             return FloatType()
         elif ctx.STRINGTYPE():
-            return StringType();
+            return StringType()
+        else:
+            raise ValueError("Not implemented yet.")
 
     # Visit a parse tree produced by MCParser#manyVar.
     def visitManyVar(self, ctx:MCParser.ManyVarContext):
-        return None
+        return [varNode for varNode in ctx.var()]
 
 
     # Visit a parse tree produced by MCParser#var.
     def visitVar(self, ctx:MCParser.VarContext):
-        return None
+        """Return var with format: [varName, index] 
+                where: 
+                    + index = -1: var belongs to basic type (int, float, string, ...)
+                    + index > 0 : var belongs to array type"""
+        if ctx.LQB():
+            return [ctx.IDENTIFIER().getText(), int(ctx.INTLIT().getText())]
+        else: 
+            return [ctx.IDENTIFIER().getText(), -1]
 
 
     # Visit a parse tree produced by MCParser#funcDeclare.
