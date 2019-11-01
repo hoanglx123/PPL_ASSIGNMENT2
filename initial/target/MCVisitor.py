@@ -14,6 +14,11 @@ class MCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MCParser#declInProgram.
+    def visitDeclInProgram(self, ctx:MCParser.DeclInProgramContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MCParser#varDeclare.
     def visitVarDeclare(self, ctx:MCParser.VarDeclareContext):
         return self.visitChildren(ctx)
@@ -44,18 +49,18 @@ class MCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MCParser#paramList.
+    def visitParamList(self, ctx:MCParser.ParamListContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MCParser#paramDeclare.
     def visitParamDeclare(self, ctx:MCParser.ParamDeclareContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#manyParam.
-    def visitManyParam(self, ctx:MCParser.ManyParamContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MCParser#param.
-    def visitParam(self, ctx:MCParser.ParamContext):
+    # Visit a parse tree produced by MCParser#paramName.
+    def visitParamName(self, ctx:MCParser.ParamNameContext):
         return self.visitChildren(ctx)
 
 
