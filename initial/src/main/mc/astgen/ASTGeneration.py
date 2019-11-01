@@ -5,8 +5,14 @@ from AST import *
 class ASTGeneration(MCVisitor):
      # Visit a parse tree produced by MCParser#program.
     def visitProgram(self, ctx:MCParser.ProgramContext):
-        return Program(self.visit(ctx.varDeclare()))
+       return Program(self.visit(ctx.declInProgram()))
 
+    # Visit a parse tree produced by MCParser#declInProgram.
+    def visitDeclInProgram(self, ctx:MCParser.DeclInProgramContext):
+        if ctx.varDeclare(): 
+            return self.visit(ctx.varDeclare())
+        else: 
+            return self.visit(ctx.funcDeclare())
 
     # Visit a parse tree produced by MCParser#varDeclare.
     def visitVarDeclare(self, ctx:MCParser.VarDeclareContext):
@@ -14,29 +20,31 @@ class ASTGeneration(MCVisitor):
         for varNode in self.visit(ctx.manyVar()):
             # Basic type 
             if self.visit(varNode)[1] == -1: 
-                result.append(VarDecl(self.visit(varNode)[0], self.visit(ctx.varType())))   
+                result.append(VarDecl(Id(self.visit(varNode)[0]), self.visit(ctx.varType())))   
             # Array type
             else: 
-                result.append(ArrayType(self.visit(ctx.varType()), self.visit(varNode)[1]))
+                result.append(VarDecl(Id(self.visit(varNode)[0]), ArrayType(self.visit(varNode)[1], self.visit(ctx.varType()))))
         return result 
 
 
     # Visit a parse tree produced by MCParser#varType.
     def visitVarType(self, ctx:MCParser.VarTypeContext):
         if ctx.BOOLTYPE():
-            return BoolType()
+            varType = BoolType()
         elif ctx.INTTYPE():
-            return IntType()
+            varType = IntType()
         elif ctx.FLOATTYPE():
-            return FloatType()
+            varType = FloatType()
         elif ctx.STRINGTYPE():
-            return StringType()
+            varType = StringType()
         else:
-            raise ValueError("Not implemented yet.")
+            varType = "UNKNOWN"
+        return varType
+     
 
     # Visit a parse tree produced by MCParser#manyVar.
     def visitManyVar(self, ctx:MCParser.ManyVarContext):
-        return [varNode for varNode in ctx.var()]
+        return ctx.var()
 
 
     # Visit a parse tree produced by MCParser#var.
@@ -45,7 +53,7 @@ class ASTGeneration(MCVisitor):
                 where: 
                     + index = -1: var belongs to basic type (int, float, string, ...)
                     + index > 0 : var belongs to array type"""
-        if ctx.LQB():
+        if ctx.getChildCount() > 1:
             return [ctx.IDENTIFIER().getText(), int(ctx.INTLIT().getText())]
         else: 
             return [ctx.IDENTIFIER().getText(), -1]
@@ -53,32 +61,60 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#funcDeclare.
     def visitFuncDeclare(self, ctx:MCParser.FuncDeclareContext):
-        return None
+        FuncDeclObj = FuncDecl( Id(ctx.IDENTIFIER().getText()), 
+                                self.visit(ctx.paramList()) if ctx.paramList() else [], 
+                                self.visit(ctx.returnType()), 
+                                self.visit(ctx.blockStatement()))
+        return [FuncDeclObj]
 
 
     # Visit a parse tree produced by MCParser#returnType.
     def visitReturnType(self, ctx:MCParser.ReturnTypeContext):
-        return None
+        if ctx.BOOLTYPE():
+            returnType = BoolType()
+        elif ctx.INTTYPE():
+            returnType = IntType()
+        elif ctx.FLOATTYPE():
+            returnType = FloatType()
+        elif ctx.STRINGTYPE():
+            returnType = StringType()
+        elif ctx.VOIDTYPE(): 
+            returnType = VoidType()
+        else:
+            raise ValueError("Not implemented yet.")
 
+        # Check if return type is array pointer type 
+        if ctx.LQB():
+            returnType = ArrayPointerType(returnType)
+
+        return returnType
+
+    # Visit a parse tree produced by MCParser#paramList.
+    def visitParamList(self, ctx:MCParser.ParamListContext):
+        return ctx.paramDeclare()
 
     # Visit a parse tree produced by MCParser#paramDeclare.
     def visitParamDeclare(self, ctx:MCParser.ParamDeclareContext):
-        return None
+        # Basic type 
+        if self.visit(ctx.paramName())[1] == False: 
+            return VarDecl(self.visit(ctx.paramName())[0], self.visit(ctx.varType()))
+        # Array type 
+        else:
+            return ArrayPointerType(self.visit(ctx.varType()))
 
-
-    # Visit a parse tree produced by MCParser#manyParam.
-    def visitManyParam(self, ctx:MCParser.ManyParamContext):
-        return None
-
-
-    # Visit a parse tree produced by MCParser#param.
-    def visitParam(self, ctx:MCParser.ParamContext):
-        return None
+    # Visit a parse tree produced by MCParser#paramName.
+    def visitParamName(self, ctx:MCParser.ParamNameContext):
+        # Array type 
+        if ctx.getChildCount() > 1:
+            return [ctx.IDENTIFIER().getText(), True]
+        # Basic type 
+        else: 
+            return [ctx.IDENTIFIER().getText(), False]
 
 
     # Visit a parse tree produced by MCParser#blockStatement.
     def visitBlockStatement(self, ctx:MCParser.BlockStatementContext):
-        return None
+        return Block(["BLOCK_STATEMENT"])
 
 
     # Visit a parse tree produced by MCParser#contentBlockStatement.

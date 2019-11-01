@@ -1,1 +1,1 @@
-int main(int a, float b, int c[100]) {} 
+int a, b[10], c, d[100];

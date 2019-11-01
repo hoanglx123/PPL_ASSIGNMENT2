@@ -29,9 +29,9 @@ options{
 /***************************************/
 /************ Parser *******************/
 /***************************************/
-// program:        manyDecls EOF; 
-// manyDecls:      (varDeclare | funcDeclare)+;
-program: varDeclare; 
+// program:        declInProgram+ EOF; 
+program:        declInProgram EOF; 
+declInProgram:  varDeclare | funcDeclare; 
 
 // Variable declearation 
 varDeclare:     varType manyVar SM;
@@ -40,12 +40,12 @@ manyVar:        var (CM var)* ;
 var:            IDENTIFIER (LQB INTLIT RQB)? ;
 
 // Function declearation
-funcDeclare:    returnType IDENTIFIER LB paramDeclare RB blockStatement;
+funcDeclare:    returnType IDENTIFIER LB paramList? RB blockStatement;
 returnType:     (BOOLTYPE | INTTYPE | FLOATTYPE | STRINGTYPE | VOIDTYPE) (LQB RQB)?;
-paramDeclare:   (varType manyParam)?;
-manyParam:      param (CM param)*;
-param:          IDENTIFIER (LQB RQB)?;
-blockStatement:        LP contentBlockStatement? RP; 
+paramList:      paramDeclare (CM paramDeclare)*;
+paramDeclare:   varType paramName;
+paramName:      IDENTIFIER (LQB RQB)?;
+blockStatement: LP contentBlockStatement? RP; 
 contentBlockStatement: (varDeclare | statement) (varDeclare | statement)*;
 
 statement:      assignment 
