@@ -14,10 +14,12 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#declInProgram.
     def visitDeclInProgram(self, ctx:MCParser.DeclInProgramContext):
+        declInProgram = []
         if ctx.varDeclare(): 
-            return self.visit(ctx.varDeclare())
+            declInProgram += self.visit(ctx.varDeclare())
         else: 
-            return self.visit(ctx.funcDeclare())
+            declInProgram.append(self.visit(ctx.funcDeclare()))
+        return declInProgram
 
     # Visit a parse tree produced by MCParser#varDeclare.
     def visitVarDeclare(self, ctx:MCParser.VarDeclareContext):
@@ -66,20 +68,10 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#funcDeclare.
     def visitFuncDeclare(self, ctx:MCParser.FuncDeclareContext):
-        # paramList = []
-        # for paramDeclareNode in self.visit(ctx.paramList()): 
-        #     Array pointer type 
-        #     if self.visit(paramDeclareNode)[1] == True: 
-        #         paramList.append(VarDecl(self.visit(paramDeclareNode)[0], ArrayPointerType(self.visit(ctx.varType()))))
-        #     # Basic type 
-        #     else:
-        #         paramList.append(VarDecl(self.visit(paramDeclareNode)[0], self.visit(ctx.varType())))
-
-        FuncDeclObj = FuncDecl( Id(ctx.IDENTIFIER().getText()), 
-                                self.visit(ctx.paramList()) if ctx.paramList() else [],  
-                                self.visit(ctx.returnType()), 
-                                self.visit(ctx.blockStatement()))
-        return [FuncDeclObj]
+        return FuncDecl( Id(ctx.IDENTIFIER().getText()), 
+                            self.visit(ctx.paramList()) if ctx.paramList() else [],  
+                            self.visit(ctx.returnType()), 
+                            self.visit(ctx.blockStatement()))
 
 
     # Visit a parse tree produced by MCParser#returnType.
@@ -117,7 +109,7 @@ class ASTGeneration(MCVisitor):
             return VarDecl(self.visit(ctx.paramName())[0], self.visit(ctx.varType()))
         # Array type 
         else:
-            return ArrayPointerType(self.visit(ctx.varType()))
+            return VarDecl(self.visit(ctx.paramName())[0], ArrayPointerType(self.visit(ctx.varType())))
 
     # Visit a parse tree produced by MCParser#paramName.
     def visitParamName(self, ctx:MCParser.ParamNameContext):
@@ -131,22 +123,50 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#blockStatement.
     def visitBlockStatement(self, ctx:MCParser.BlockStatementContext):
-        return Block([])
+        return Block(self.visit(ctx.contentBlockStatement())) if ctx.contentBlockStatement() else Block([])
 
 
     # Visit a parse tree produced by MCParser#contentBlockStatement.
     def visitContentBlockStatement(self, ctx:MCParser.ContentBlockStatementContext):
-        return None
+        blockMemberList = []
+        for declNode in ctx.declInFunc():
+            # blockMemberList = self.visit(declNode)
+            blockMemberList += self.visit(declNode)
+        return blockMemberList
+
+    # Visit a parse tree produced by MCParser#declInFunc.
+    def visitDeclInFunc(self, ctx:MCParser.DeclInFuncContext):
+        # Var declare 
+        if ctx.varDeclare(): 
+            return self.visit(ctx.varDeclare())
+        # Statement declare
+        else:  
+            return [self.visit(ctx.statement())]
 
 
     # Visit a parse tree produced by MCParser#statement.
     def visitStatement(self, ctx:MCParser.StatementContext):
-        return None
+        if ctx.assignment(): 
+            return self.visit(ctx.assignment())
+        elif ctx.if_statement(): 
+            return self.visit(ctx.if_statement())
+        elif ctx.do_while_statement(): 
+            return self.visit(ctx.do_while_statement())
+        elif ctx.for_statement(): 
+            return self.visit(ctx.for_statement())
+        elif ctx.blockStatement(): 
+            return self.visit(ctx.blockStatement())
+        elif ctx.callStatement(): 
+            return self.visit(ctx.callStatement())
+        elif ctx.returnFunc(): 
+            return self.visit(ctx.returnFunc())
+        else: 
+            return "UNKOWN_STATEMENT" 
 
 
     # Visit a parse tree produced by MCParser#assignment.
     def visitAssignment(self, ctx:MCParser.AssignmentContext):
-        return None
+        return "ASSIGN_STATEMENT"
 
 
     # Visit a parse tree produced by MCParser#callStatement.
@@ -166,12 +186,17 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#if_statement.
     def visitIf_statement(self, ctx:MCParser.If_statementContext):
-        return None
+        expr     = None
+        thenStmt = None
+        elseStmt = None
 
-
-    # Visit a parse tree produced by MCParser#condBlock.
-    def visitCondBlock(self, ctx:MCParser.CondBlockContext):
-        return None
+        expr = self.visit(ctx.boolExpr())
+        if ctx.KEYWORD_ELSE() is None: 
+            thenStmt = self.visit(ctx.statement(0))
+        else: 
+            thenStmt = self.visit(ctx.statement(0))
+            elseStmt = self.visit(ctx.statement(1))
+        return If(expr, thenStmt, elseStmt)
 
 
     # Visit a parse tree produced by MCParser#do_while_statement.
@@ -226,5 +251,5 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#boolExpr.
     def visitBoolExpr(self, ctx:MCParser.BoolExprContext):
-        return None
+        return "BOOL_EXPR"
 

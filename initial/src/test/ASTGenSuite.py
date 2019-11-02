@@ -55,37 +55,19 @@ class ASTGenSuite(unittest.TestCase):
         print("Expect result: %s" % (expect))
         self.assertTrue(TestAST.checkASTGen(input,expect,302))
 
-    # def test_func_declare_with_params(self):
-    #     """Function declare with parameters """
-    #     input = """ boolean funcA(boolean varBool, int varInt, float varFloat, string varStr, int varArrList[]){}             
-    #             """
-    #     expect = str(Program([  
-    #                             FuncDecl( 
-    #                                     Id("funcA"), 
-    #                                     [
-    #                                         VarDecl("varBool",    BoolType()), 
-    #                                         VarDecl("varInt",     IntType()), 
-    #                                         VarDecl("varFloat",   FloatType()),
-    #                                         VarDecl("varStr",     StringType()), 
-    #                                         VarDecl("varArrList", ArrayPointerType(IntType())), 
-    #                                     ], 
-    #                                     BoolType(),   
-    #                                     Block([]) 
-    #                                 )
-    #                     ]))
-    #     print("Expect result: %s" % (expect))
-    #     self.assertTrue(TestAST.checkASTGen(input,expect,303))
-
-    
     def test_func_declare_with_params(self):
         """Function declare with parameters """
-        input = """ boolean funcA(boolean varBool){}             
+        input = """ boolean funcA(boolean varBool, int varInt, float varFloat, int varArrList[], string varStr){}             
                 """
         expect = str(Program([  
                                 FuncDecl( 
                                         Id("funcA"), 
                                         [
-                                            VarDecl("varBool",    BoolType())
+                                            VarDecl("varBool",    BoolType()), 
+                                            VarDecl("varInt",     IntType()), 
+                                            VarDecl("varFloat",   FloatType()),
+                                            VarDecl("varArrList", ArrayPointerType(IntType())), 
+                                            VarDecl("varStr",     StringType())
                                         ], 
                                         BoolType(),   
                                         Block([]) 
@@ -94,25 +76,56 @@ class ASTGenSuite(unittest.TestCase):
         print("Expect result: %s" % (expect))
         self.assertTrue(TestAST.checkASTGen(input,expect,303))
 
-    # def test_simple_program3(self):
-    #     """Simple program: void main() {} """
-    #     input = """void main() {} """
-    #     expect = str(Program([
-    #                     FuncDecl(
-    #                             Id("main"),
-    #                             [],
-    #                             VoidType(),
-    #                             Block(["BLOCK_STATEMENT"])
-    #                         )
-    #                 ]))
-    #     print("Expect result: %s" % (expect))
-    #     self.assertTrue(TestAST.checkASTGen(input,expect,302))
-        
-    # def test_simple_program3(self):
-    #     """Simple program: int main() {} """
-    #     input = """int a;"""
-    #     expect = Program([
-    #                         VarDecl(Id("a"), IntType())
-    #                     ])
-    #     print("Expect result: %s" % (expect))
-    #     self.assertTrue(TestAST.checkASTGen(input,expect,302))
+    def test_func_declare_with_params_in_body(self):
+        """Function declare with params in body """
+        input = """ boolean funcA(int varArrList[], string varStr)
+                    {
+                        int   varIntA, varIntB[100]; 
+                        float varFloat; 
+                    }             
+                """
+        expect = str(Program([  
+                                FuncDecl( 
+                                        Id("funcA"), 
+                                        [
+                                            VarDecl("varArrList", ArrayPointerType(IntType())), 
+                                            VarDecl("varStr",     StringType())
+                                        ], 
+                                        BoolType(),   
+                                        Block([
+                                            VarDecl("varIntA",  IntType()),
+                                            VarDecl("varIntB",  ArrayType(100, IntType())), 
+                                            VarDecl("varFloat", FloatType()),
+                                        ]) 
+                                    )
+                        ]))
+        print("Expect result: %s" % (expect))
+        self.assertTrue(TestAST.checkASTGen(input,expect,304))
+
+    def test_func_declare_with_statement_in_body(self):
+        """Function declare with statements in body """
+        input = """ boolean funcA(boolean bFlag)
+                    {
+                        int varInt; 
+
+                        if(bFlag == true)
+                        {
+                            varInt = 10;
+                        }
+                    }             
+                """
+        expect = str(Program([  
+                                FuncDecl( 
+                                        Id("funcA"), 
+                                        [
+                                            VarDecl("bFlag", BoolType()), 
+                                        ], 
+                                        BoolType(),   
+                                        Block([
+                                            VarDecl("varInt",  IntType()),
+                                            If("BOOL_EXPR", Block(["ASSIGN_STATEMENT"]), None)
+                                        ]) 
+                                    )
+                        ]))
+        print("Expect result: %s" % (expect))
+        self.assertTrue(TestAST.checkASTGen(input,expect,305))

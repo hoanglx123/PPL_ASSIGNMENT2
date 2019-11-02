@@ -74,6 +74,11 @@ class MCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MCParser#declInFunc.
+    def visitDeclInFunc(self, ctx:MCParser.DeclInFuncContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MCParser#statement.
     def visitStatement(self, ctx:MCParser.StatementContext):
         return self.visitChildren(ctx)
@@ -101,11 +106,6 @@ class MCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MCParser#if_statement.
     def visitIf_statement(self, ctx:MCParser.If_statementContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MCParser#condBlock.
-    def visitCondBlock(self, ctx:MCParser.CondBlockContext):
         return self.visitChildren(ctx)
 
 

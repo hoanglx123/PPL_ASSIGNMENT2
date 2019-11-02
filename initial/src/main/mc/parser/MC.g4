@@ -30,7 +30,6 @@ options{
 /************ Parser *******************/
 /***************************************/
 program:        declInProgram+ EOF; 
-// program:        declInProgram EOF; 
 declInProgram:  varDeclare | funcDeclare; 
 
 // Variable declearation 
@@ -46,7 +45,8 @@ paramList:      paramDeclare (CM paramDeclare)*;
 paramDeclare:   varType paramName;
 paramName:      IDENTIFIER (LQB RQB)?;
 blockStatement: LP contentBlockStatement? RP; 
-contentBlockStatement: (varDeclare | statement) (varDeclare | statement)*;
+contentBlockStatement: declInFunc+;
+declInFunc:     varDeclare | statement;
 
 statement:      assignment 
               | if_statement
@@ -63,11 +63,10 @@ listExpr:       expr (CM expr)*;
 returnFunc:     KEYWORD_RETURN  expr SM; 
 
 // If statement 
-if_statement:   KEYWORD_IF condBlock blockStatement (KEYWORD_ELSE blockStatement)?;
-condBlock:      LB boolExpr RB;
+if_statement:   KEYWORD_IF LB boolExpr RB statement (KEYWORD_ELSE statement)?;
 
 // do-while statement 
-do_while_statement: KEYWORD_DO blockStatement KEYWORD_WHILE condBlock SM;
+do_while_statement: KEYWORD_DO blockStatement KEYWORD_WHILE LB boolExpr RB SM;
 
 // for statement
 for_statement:  KEYWORD_FOR LB forExpr1? SM forExpr2? SM forExpr3? RB blockStatement;
