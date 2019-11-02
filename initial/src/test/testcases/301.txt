@@ -1,1 +1,5 @@
-int a, b[10], c, d[100];
+ int     varInt;
+                    float   varFloat;
+                    string  strArr[100];
+                    boolean varBool1, varBool2; 
+                

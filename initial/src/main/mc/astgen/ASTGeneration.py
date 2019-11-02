@@ -5,7 +5,12 @@ from AST import *
 class ASTGeneration(MCVisitor):
      # Visit a parse tree produced by MCParser#program.
     def visitProgram(self, ctx:MCParser.ProgramContext):
-       return Program(self.visit(ctx.declInProgram()))
+        declList = []
+        for declNode in ctx.declInProgram(): 
+            declList += self.visit(declNode)
+        # return Program(declList)
+        return Program(declList)
+
 
     # Visit a parse tree produced by MCParser#declInProgram.
     def visitDeclInProgram(self, ctx:MCParser.DeclInProgramContext):
@@ -20,10 +25,10 @@ class ASTGeneration(MCVisitor):
         for varNode in self.visit(ctx.manyVar()):
             # Basic type 
             if self.visit(varNode)[1] == -1: 
-                result.append(VarDecl(Id(self.visit(varNode)[0]), self.visit(ctx.varType())))   
+                result.append(VarDecl(self.visit(varNode)[0], self.visit(ctx.varType())))   
             # Array type
             else: 
-                result.append(VarDecl(Id(self.visit(varNode)[0]), ArrayType(self.visit(varNode)[1], self.visit(ctx.varType()))))
+                result.append(VarDecl(self.visit(varNode)[0], ArrayType(self.visit(varNode)[1], self.visit(ctx.varType()))))
         return result 
 
 
@@ -61,8 +66,17 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#funcDeclare.
     def visitFuncDeclare(self, ctx:MCParser.FuncDeclareContext):
+        # paramList = []
+        # for paramDeclareNode in self.visit(ctx.paramList()): 
+        #     Array pointer type 
+        #     if self.visit(paramDeclareNode)[1] == True: 
+        #         paramList.append(VarDecl(self.visit(paramDeclareNode)[0], ArrayPointerType(self.visit(ctx.varType()))))
+        #     # Basic type 
+        #     else:
+        #         paramList.append(VarDecl(self.visit(paramDeclareNode)[0], self.visit(ctx.varType())))
+
         FuncDeclObj = FuncDecl( Id(ctx.IDENTIFIER().getText()), 
-                                self.visit(ctx.paramList()) if ctx.paramList() else [], 
+                                self.visit(ctx.paramList()) if ctx.paramList() else [],  
                                 self.visit(ctx.returnType()), 
                                 self.visit(ctx.blockStatement()))
         return [FuncDeclObj]
@@ -91,7 +105,10 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#paramList.
     def visitParamList(self, ctx:MCParser.ParamListContext):
-        return ctx.paramDeclare()
+        paramList = []
+        for paramDeclareNode in ctx.paramDeclare():
+            paramList.append(self.visit(paramDeclareNode))
+        return paramList
 
     # Visit a parse tree produced by MCParser#paramDeclare.
     def visitParamDeclare(self, ctx:MCParser.ParamDeclareContext):
@@ -114,7 +131,7 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#blockStatement.
     def visitBlockStatement(self, ctx:MCParser.BlockStatementContext):
-        return Block(["BLOCK_STATEMENT"])
+        return Block([])
 
 
     # Visit a parse tree produced by MCParser#contentBlockStatement.

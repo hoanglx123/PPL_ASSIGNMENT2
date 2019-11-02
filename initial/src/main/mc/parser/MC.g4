@@ -29,8 +29,8 @@ options{
 /***************************************/
 /************ Parser *******************/
 /***************************************/
-// program:        declInProgram+ EOF; 
-program:        declInProgram EOF; 
+program:        declInProgram+ EOF; 
+// program:        declInProgram EOF; 
 declInProgram:  varDeclare | funcDeclare; 
 
 // Variable declearation 
