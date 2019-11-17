@@ -1,0 +1,1 @@
+Program([FuncDecl(Id(funcA),[VarDecl(bFlag,BoolType)],BoolType,Block([Dowhile([Block([VarDecl(varFloat,FloatType)])],BooleanLiteral(true))]))])

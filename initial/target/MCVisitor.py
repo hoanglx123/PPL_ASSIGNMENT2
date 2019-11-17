@@ -84,8 +84,8 @@ class MCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#assignment.
-    def visitAssignment(self, ctx:MCParser.AssignmentContext):
+    # Visit a parse tree produced by MCParser#assignStatement.
+    def visitAssignStatement(self, ctx:MCParser.AssignStatementContext):
         return self.visitChildren(ctx)
 
 
@@ -104,43 +104,28 @@ class MCVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#if_statement.
-    def visitIf_statement(self, ctx:MCParser.If_statementContext):
+    # Visit a parse tree produced by MCParser#ifStatement.
+    def visitIfStatement(self, ctx:MCParser.IfStatementContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#do_while_statement.
-    def visitDo_while_statement(self, ctx:MCParser.Do_while_statementContext):
+    # Visit a parse tree produced by MCParser#doWhileStatement.
+    def visitDoWhileStatement(self, ctx:MCParser.DoWhileStatementContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#for_statement.
-    def visitFor_statement(self, ctx:MCParser.For_statementContext):
+    # Visit a parse tree produced by MCParser#forStatement.
+    def visitForStatement(self, ctx:MCParser.ForStatementContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#forExpr1.
-    def visitForExpr1(self, ctx:MCParser.ForExpr1Context):
+    # Visit a parse tree produced by MCParser#breakStatement.
+    def visitBreakStatement(self, ctx:MCParser.BreakStatementContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MCParser#forExpr2.
-    def visitForExpr2(self, ctx:MCParser.ForExpr2Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MCParser#forExpr3.
-    def visitForExpr3(self, ctx:MCParser.ForExpr3Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MCParser#break_statement.
-    def visitBreak_statement(self, ctx:MCParser.Break_statementContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by MCParser#continue_statement.
-    def visitContinue_statement(self, ctx:MCParser.Continue_statementContext):
+    # Visit a parse tree produced by MCParser#continueStatement.
+    def visitContinueStatement(self, ctx:MCParser.ContinueStatementContext):
         return self.visitChildren(ctx)
 
 
@@ -161,6 +146,16 @@ class MCVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by MCParser#boolExpr.
     def visitBoolExpr(self, ctx:MCParser.BoolExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MCParser#stringExpr.
+    def visitStringExpr(self, ctx:MCParser.StringExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MCParser#indexExpr.
+    def visitIndexExpr(self, ctx:MCParser.IndexExprContext):
         return self.visitChildren(ctx)
 
 

@@ -1,0 +1,15 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        int varInt1;
+                        int varInt2;
+                         
+                        varInt1 = 100; 
+                        varInt2 = 10; 
+
+                        do
+                        {
+                            float varFloat; 
+                        }
+                        while(varInt1 > varInt2);
+                    }             
+                

@@ -180,7 +180,7 @@ class StringLiteral(Literal):
         return v.visitStringLiteral(self, param)
 @dataclass
 class BooleanLiteral(Literal):
-    value:bool
+    value:bool 
 
     def __str__(self):
         return "BooleanLiteral(" + str(self.value).lower() + ")"

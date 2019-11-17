@@ -1,3 +1,4 @@
+#  Name: Nguyen Thanh Hoang - ID: 1870172
 from MCVisitor import MCVisitor
 from MCParser import MCParser
 from AST import *
@@ -8,7 +9,6 @@ class ASTGeneration(MCVisitor):
         declList = []
         for declNode in ctx.declInProgram(): 
             declList += self.visit(declNode)
-        # return Program(declList)
         return Program(declList)
 
 
@@ -130,7 +130,6 @@ class ASTGeneration(MCVisitor):
     def visitContentBlockStatement(self, ctx:MCParser.ContentBlockStatementContext):
         blockMemberList = []
         for declNode in ctx.declInFunc():
-            # blockMemberList = self.visit(declNode)
             blockMemberList += self.visit(declNode)
         return blockMemberList
 
@@ -146,14 +145,14 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#statement.
     def visitStatement(self, ctx:MCParser.StatementContext):
-        if ctx.assignment(): 
-            return self.visit(ctx.assignment())
-        elif ctx.if_statement(): 
-            return self.visit(ctx.if_statement())
-        elif ctx.do_while_statement(): 
-            return self.visit(ctx.do_while_statement())
-        elif ctx.for_statement(): 
-            return self.visit(ctx.for_statement())
+        if ctx.assignStatement(): 
+            return self.visit(ctx.assignStatement())
+        elif ctx.ifStatement(): 
+            return self.visit(ctx.ifStatement())
+        elif ctx.doWhileStatement(): 
+            return self.visit(ctx.doWhileStatement())
+        elif ctx.forStatement(): 
+            return self.visit(ctx.forStatement())
         elif ctx.blockStatement(): 
             return self.visit(ctx.blockStatement())
         elif ctx.callStatement(): 
@@ -165,91 +164,160 @@ class ASTGeneration(MCVisitor):
 
 
     # Visit a parse tree produced by MCParser#assignment.
-    def visitAssignment(self, ctx:MCParser.AssignmentContext):
-        return "ASSIGN_STATEMENT"
+    def visitAssignStatement(self, ctx:MCParser.AssignStatementContext):
+        leftExpr  = Id(ctx.IDENTIFIER().getText())
+        rightExpr = self.visit(ctx.expr())
+        return BinaryOp(ctx.ASSOP().getText(), leftExpr, rightExpr)
 
 
     # Visit a parse tree produced by MCParser#callStatement.
     def visitCallStatement(self, ctx:MCParser.CallStatementContext):
-        return None
+        method    = Id(ctx.IDENTIFIER().getText())
+        paramList = self.visit(ctx.listExpr()) if ctx.listExpr() else []
+        return CallExpr(method, paramList)
 
 
     # Visit a parse tree produced by MCParser#listExpr.
     def visitListExpr(self, ctx:MCParser.ListExprContext):
-        return None
+        listExpr = []
+        for exprNode in ctx.expr(): 
+            listExpr.append(self.visit(exprNode))
+        return listExpr
 
 
     # Visit a parse tree produced by MCParser#returnFunc.
     def visitReturnFunc(self, ctx:MCParser.ReturnFuncContext):
-        return None
+        return Return(self.visit(ctx.expr()))
 
 
     # Visit a parse tree produced by MCParser#if_statement.
-    def visitIf_statement(self, ctx:MCParser.If_statementContext):
-        expr     = None
-        thenStmt = None
-        elseStmt = None
-
-        expr = self.visit(ctx.boolExpr())
-        if ctx.KEYWORD_ELSE() is None: 
-            thenStmt = self.visit(ctx.statement(0))
-        else: 
-            thenStmt = self.visit(ctx.statement(0))
+    def visitIfStatement(self, ctx:MCParser.IfStatementContext):
+        expr     = self.visit(ctx.boolExpr())
+        thenStmt = self.visit(ctx.statement(0))
+        if ctx.KEYWORD_ELSE(): 
             elseStmt = self.visit(ctx.statement(1))
+        else:
+            elseStmt = None
         return If(expr, thenStmt, elseStmt)
 
 
-    # Visit a parse tree produced by MCParser#do_while_statement.
-    def visitDo_while_statement(self, ctx:MCParser.Do_while_statementContext):
-        return None
+    # Visit a parse tree produced by MCParser#doWhileStatement.
+    def visitDoWhileStatement(self, ctx:MCParser.DoWhileStatementContext):
+        stmList = [self.visit(ctx.blockStatement())]
+        expr    = self.visit(ctx.boolExpr())
+        return Dowhile(stmList, expr)
 
 
-    # Visit a parse tree produced by MCParser#for_statement.
-    def visitFor_statement(self, ctx:MCParser.For_statementContext):
-        return None
-
-
-    # Visit a parse tree produced by MCParser#forExpr1.
-    def visitForExpr1(self, ctx:MCParser.ForExpr1Context):
-        return None
-
-
-    # Visit a parse tree produced by MCParser#forExpr2.
-    def visitForExpr2(self, ctx:MCParser.ForExpr2Context):
-        return None
-
-
-    # Visit a parse tree produced by MCParser#forExpr3.
-    def visitForExpr3(self, ctx:MCParser.ForExpr3Context):
-        return None
+    # Visit a parse tree produced by MCParser#forStatement.
+    def visitForStatement(self, ctx:MCParser.ForStatementContext):
+        expr1 = self.visit(ctx.expr(0))
+        expr2 = self.visit(ctx.boolExpr())
+        expr3 = self.visit(ctx.expr(1))
+        loop  = self.visit(ctx.statement()) 
+        return For(expr1, expr2, expr3, loop)
 
 
     # Visit a parse tree produced by MCParser#break_statement.
-    def visitBreak_statement(self, ctx:MCParser.Break_statementContext):
-        return None
+    def visitBreakStatement(self, ctx:MCParser.BreakStatementContext):
+        return Break()
 
 
     # Visit a parse tree produced by MCParser#continue_statement.
-    def visitContinue_statement(self, ctx:MCParser.Continue_statementContext):
-        return None
+    def visitContinueStatement(self, ctx:MCParser.ContinueStatementContext):
+        return Continue()
 
 
     # Visit a parse tree produced by MCParser#expr.
     def visitExpr(self, ctx:MCParser.ExprContext):
-        return None
+        if ctx.floatExpr():
+            return self.visit(ctx.floatExpr())
+        elif ctx.intExpr():
+            return self.visit(ctx.intExpr())
+        elif ctx.boolExpr():
+            return self.visit(ctx.boolExpr())
+        elif ctx.stringExpr():
+            return self.visit(ctx.stringExpr())
+        elif ctx.indexExpr():
+            return self.visit(ctx.indexExpr())
+        else:
+            return "UNKNOWN_EXPR"
 
 
     # Visit a parse tree produced by MCParser#floatExpr.
     def visitFloatExpr(self, ctx:MCParser.FloatExprContext):
-        return None
+        if ctx.FLOATLIT():
+            return FloatLiteral(ctx.FLOATLIT().getText())
+        elif ctx.IDENTIFIER():
+            return Id(ctx.IDENTIFIER().getText())
+        elif ctx.intExpr():
+            return self.visit(ctx.intExpr())
+        else: 
+            # Expression in "(" and ")"
+            if ctx.LB():
+                return self.visit(ctx.getChild(1))
+            # Binary Oprand
+            elif ctx.getChildCount() == 3: 
+                op        = ctx.getChild(1).getText()
+                leftExpr  = self.visit(ctx.getChild(0))
+                rightExpr = self.visit(ctx.getChild(2))
+                return BinaryOp(op, leftExpr, rightExpr)
+            else:
+                return "UNDEFINED_EXPR"
 
 
     # Visit a parse tree produced by MCParser#intExpr.
     def visitIntExpr(self, ctx:MCParser.IntExprContext):
-        return None
-
+        if ctx.INTLIT():
+            return IntLiteral(ctx.INTLIT().getText())
+        elif ctx.IDENTIFIER():
+            return Id(ctx.IDENTIFIER().getText())
+        else: 
+            # Expression in "(" and ")"
+            if ctx.LB():
+                # return self.visit(ctx.intExpr())
+                return self.visit(ctx.getChild(1))
+            # Binary Oprand
+            elif ctx.getChildCount() == 3: 
+                op        = ctx.getChild(1).getText()
+                leftExpr  = self.visit(ctx.getChild(0))
+                rightExpr = self.visit(ctx.getChild(2))
+                return BinaryOp(op, leftExpr, rightExpr)
+            else:
+                return "UNDEFINED_EXPR"
 
     # Visit a parse tree produced by MCParser#boolExpr.
     def visitBoolExpr(self, ctx:MCParser.BoolExprContext):
-        return "BOOL_EXPR"
+        if ctx.BOOLLIT():
+            return BooleanLiteral(ctx.BOOLLIT().getText())
+        elif ctx.IDENTIFIER():
+            return Id(ctx.IDENTIFIER().getText())
+        elif ctx.intExpr():
+            return self.visit(ctx.intExpr())
+        else: 
+            # Expression in "(" and ")"
+            if ctx.LB():
+                return self.visit(ctx.getChild(1))
+            # Binary Oprand
+            elif ctx.getChildCount() == 3: 
+                op        = ctx.getChild(1).getText()
+                leftExpr  = self.visit(ctx.getChild(0))
+                rightExpr = self.visit(ctx.getChild(2))
+                return BinaryOp(op, leftExpr, rightExpr)
+            else: 
+                return "UNDEFINED_EXPR"
 
+
+    # Visit a parse tree produced by MCParser#stringExpr.
+    def visitStringExpr(self, ctx:MCParser.StringExprContext):
+        leftExpr  = Id(ctx.IDENTIFIER().getText())
+        rightExpr = StringLiteral(ctx.STRLIT().getText())
+        return BinaryOp("=", leftExpr, rightExpr)
+
+
+    # Visit a parse tree produced by MCParser#indexExpr.
+    def visitIndexExpr(self, ctx:MCParser.IndexExprContext):
+        if ctx.getChildCount() > 1:  
+            idxExpr = "INDEX_BY_ARRAY_TYPE"
+        else:
+            idxExpr = self.visit(ctx.intExpr()) 
+        return idxExpr

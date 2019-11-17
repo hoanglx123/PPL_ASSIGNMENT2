@@ -1,0 +1,2 @@
+ boolean funcA(boolean varBool, int varInt, float varFloat, int varArrList[], string varStr){}             
+                

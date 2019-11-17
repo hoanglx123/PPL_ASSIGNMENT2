@@ -1,0 +1,20 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        int     varInt1;
+                        int     varInt2;
+                        boolean varBool; 
+                         
+                        varInt1 = 100; 
+                        varInt2 = 10; 
+                        varBool = true; 
+
+                        if((varInt1 > varInt2) && varBool)
+                        {
+                            float varFloat; 
+                        }
+                        else
+                        {
+                            string varStr; 
+                        }
+                    }             
+                

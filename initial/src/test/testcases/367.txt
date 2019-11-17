@@ -1,0 +1,10 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        int varInt; 
+
+                        if(true)
+                        {
+                            float varFloat; 
+                        }
+                    }             
+                

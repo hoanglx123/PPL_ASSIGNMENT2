@@ -1,1 +1,1 @@
-Program([VarDecl(varInt,IntType),VarDecl(varFloat,FloatType),VarDecl(strArr,ArrayType(StringType,100)),VarDecl(varBool1,BoolType),VarDecl(varBool2,BoolType)])
+Program([VarDecl(varInt,IntType),VarDecl(varFloat,FloatType),VarDecl(varInt2,IntType),VarDecl(varInt3,IntType),VarDecl(strArr,ArrayType(StringType,100)),VarDecl(varBool1,BoolType),VarDecl(varBool2,BoolType)])

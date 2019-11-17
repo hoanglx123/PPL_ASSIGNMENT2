@@ -1,0 +1,10 @@
+ boolean funcA(int varArrList[], string varStr)
+                    {
+                        float varFloat1;
+                        float varFloat2; 
+
+                        varFloat1 = 100.0;
+                        varFloat2 = 10.5; 
+                        varFloat1 = (varFloat1 - varFloat2) + 10.5;
+                    }       
+                

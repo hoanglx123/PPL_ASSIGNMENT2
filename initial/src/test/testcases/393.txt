@@ -1,0 +1,8 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        /* Declare variables */
+                        int varIndex; 
+
+                        putIntLn();
+                    }             
+                

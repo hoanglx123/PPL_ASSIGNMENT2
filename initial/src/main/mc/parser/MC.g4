@@ -48,71 +48,84 @@ blockStatement: LP contentBlockStatement? RP;
 contentBlockStatement: declInFunc+;
 declInFunc:     varDeclare | statement;
 
-statement:      assignment 
-              | if_statement
-              | do_while_statement
-              | for_statement
+statement:      assignStatement 
+              | ifStatement
+              | doWhileStatement
+              | forStatement
               | blockStatement
               | callStatement 
               | returnFunc
+              | varDeclare
               ;
 
-assignment:     IDENTIFIER ASSOP expr SM; 
-callStatement:  IDENTIFIER LB listExpr? RB SM;
-listExpr:       expr (CM expr)*;
-returnFunc:     KEYWORD_RETURN  expr SM; 
+assignStatement: (IDENTIFIER ASSOP) expr SM; 
+callStatement:   IDENTIFIER LB listExpr? RB SM;
+listExpr:        expr (CM expr)*;
+returnFunc:      KEYWORD_RETURN  expr SM; 
 
 // If statement 
-if_statement:   KEYWORD_IF LB boolExpr RB statement (KEYWORD_ELSE statement)?;
+ifStatement:    KEYWORD_IF (LB boolExpr RB) statement (KEYWORD_ELSE statement)?;
 
 // do-while statement 
-do_while_statement: KEYWORD_DO blockStatement KEYWORD_WHILE LB boolExpr RB SM;
+doWhileStatement: KEYWORD_DO blockStatement KEYWORD_WHILE (LB boolExpr RB) SM;
 
 // for statement
-for_statement:  KEYWORD_FOR LB forExpr1? SM forExpr2? SM forExpr3? RB blockStatement;
-forExpr1:       expr;
-forExpr2:       boolExpr;
-forExpr3:       expr;
+forStatement:   KEYWORD_FOR (LB expr? SM boolExpr? SM expr? RB) statement;
 
 // break statement 
-break_statement: KEYWORD_BREAK SM;
+breakStatement: KEYWORD_BREAK SM;
 
 // continue statement: 
-continue_statement: KEYWORD_CONTINUE SM;
+continueStatement: KEYWORD_CONTINUE SM;
 
-expr:        floatExpr
-           | intExpr
+expr:        intExpr
            | boolExpr
+           | stringExpr
+           | indexExpr
+           | floatExpr
            ;
 
-floatExpr:   <assoc=right> floatExpr ( DIVOP | MULOP | MODOP ) floatExpr
+floatExpr:              LB floatExpr RB  
+           | <assoc=right> floatExpr ( DIVOP | MULOP | MODOP ) floatExpr
            | <assoc=right> floatExpr ( ADDOP | SUBOP ) floatExpr
            |               floatExpr ( LTHOP | LEQOP | GTHOP | GTHOP ) floatExpr
            |               floatExpr ( EQOP  | NEQOP ) floatExpr
            | <assoc=right> floatExpr ( ANDOP ) floatExpr
            | <assoc=right> floatExpr ( OROP  ) floatExpr
            | <assoc=left>  floatExpr ( ASSOP ) floatExpr
-           | FLOATLIT | boolExpr | intExpr
+           | FLOATLIT 
+           | IDENTIFIER
+           | intExpr
            ;
 
-intExpr:     <assoc=right> intExpr ( DIVOP | MULOP | MODOP ) intExpr
+intExpr:                LB intExpr RB  
+           | <assoc=right> intExpr ( DIVOP | MULOP | MODOP ) intExpr
            | <assoc=right> intExpr ( ADDOP | SUBOP ) intExpr
            |               intExpr ( LTHOP | LEQOP | GTHOP | GTHOP ) intExpr
            |               intExpr ( EQOP  | NEQOP ) intExpr
            | <assoc=right> intExpr ( ANDOP ) intExpr
            | <assoc=right> intExpr ( OROP  ) intExpr
            | <assoc=left>  intExpr ( ASSOP ) intExpr
-           | INTLIT | boolExpr
+           | INTLIT 
+           | IDENTIFIER
            ;
 
-boolExpr:                  boolExpr ( LTHOP | LEQOP | GTHOP | GTHOP ) boolExpr
+boolExpr:               LB boolExpr RB 
+           | <assoc=left>           ( NOTOP ) boolExpr
+           |               boolExpr ( LTHOP | LEQOP | GTHOP | GEQOP ) boolExpr
            |               boolExpr ( EQOP  | NEQOP ) boolExpr
            | <assoc=right> boolExpr ( ANDOP ) boolExpr
            | <assoc=right> boolExpr ( OROP  ) boolExpr
            | <assoc=left>  boolExpr ( ASSOP ) boolExpr
-           | '!'? (BOOLLIT | INTLIT | IDENTIFIER)
+           | BOOLLIT 
+           | IDENTIFIER
+           | intExpr
            ;
 
+stringExpr:   IDENTIFIER ( ASSOP ) STRLIT;      
+indexExpr :   IDENTIFIER LQB intExpr RQB
+            | intExpr
+            ; 
 
 /***************************************/
 /************ Lexer  *******************/

@@ -1,0 +1,9 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        do
+                        {
+                            float varFloat; 
+                        }
+                        while(true);
+                    }             
+                

@@ -1,0 +1,7 @@
+ boolean funcA(){}
+                    int     funcB(){}
+                    float   funcC(){}
+                    string  funcD(){} 
+                    void    funcE(){}    
+                    int[]   funcF(){}              
+                

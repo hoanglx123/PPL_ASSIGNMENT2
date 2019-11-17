@@ -1,0 +1,16 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        if(bFlag == true)
+                        {
+                        }
+                        else
+                        {
+                            float varFloat1; 
+
+                            if(bFlag != true)
+                            {
+                                float varFloat2; 
+                            }
+                        }
+                    }             
+                

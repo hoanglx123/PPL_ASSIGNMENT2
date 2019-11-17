@@ -1,0 +1,10 @@
+ boolean funcA(int varArrList[], string varStr)
+                    {
+                        int varInt1;
+                        int varInt2; 
+
+                        varInt1 = 100;
+                        varInt2 = 10; 
+                        varInt1 = varInt1 * varInt2 / 5 % 10;
+                    }       
+                

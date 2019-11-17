@@ -1,0 +1,13 @@
+ boolean funcA(int varArrList[], string varStr)
+                    {
+                        boolean varBool1;
+                        boolean varBool2; 
+                        int     varInt; 
+                        boolean varBool; 
+
+                        varBool1 = true;
+                        varBool2 = false; 
+                        varInt   = 100; 
+                        varBool  = varBool1 == varBool2 && varInt > 100;
+                    }       
+                

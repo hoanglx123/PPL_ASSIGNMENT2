@@ -1,0 +1,1 @@
+Program([FuncDecl(Id(funcA),[],BoolType,Block([])),FuncDecl(Id(funcB),[],IntType,Block([])),FuncDecl(Id(funcC),[],FloatType,Block([])),FuncDecl(Id(funcD),[],StringType,Block([])),FuncDecl(Id(funcE),[],VoidType,Block([])),FuncDecl(Id(funcF),[],ArrayTypePointer(IntType),Block([]))])

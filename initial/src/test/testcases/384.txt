@@ -1,0 +1,14 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        /* Declare variables */
+                        int varIndex; 
+
+                        /* for-statement */
+                        for(varIndex = 0; varIndex < 10; varIndex = varIndex*2)
+                        {
+                            /* Do something */
+                            varInt = 12345;
+                            varInt = varInt + 100; 
+                        } 
+                    }             
+                

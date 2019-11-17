@@ -1,0 +1,11 @@
+ boolean funcA()
+                    {
+                        int     varInt1;
+                        int     varInt2; 
+                        boolean varBool; 
+
+                        varInt1 = 100;
+                        varInt2 = 10; 
+                        varBool = (varInt1 < varInt2) <= (10 > 5 >= 100);
+                    }       
+                

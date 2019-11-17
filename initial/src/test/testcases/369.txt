@@ -1,0 +1,14 @@
+ boolean funcA(boolean bFlag)
+                    {
+                        int varInt; 
+
+                        if(bFlag == true)
+                        {
+                            float varFloat; 
+                        }
+                        else
+                        {
+                            string varStr; 
+                        }
+                    }             
+                

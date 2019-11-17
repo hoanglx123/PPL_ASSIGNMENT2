@@ -1,0 +1,1 @@
+Program([FuncDecl(Id(funcA),[VarDecl(varArrList,ArrayTypePointer(IntType)),VarDecl(varStr,StringType)],BoolType,Block([VarDecl(varInt1,IntType),VarDecl(varInt2,IntType),BinaryOp(=,Id(varInt1),IntLiteral(100)),BinaryOp(=,Id(varInt2),IntLiteral(10)),BinaryOp(=,Id(varInt1),BinaryOp(*,Id(varInt1),BinaryOp(%,BinaryOp(/,Id(varInt2),IntLiteral(5)),IntLiteral(10))))]))])
