@@ -1,1 +1,0 @@
-Program([FuncDecl(Id(funcA),[VarDecl(varBool,BoolType),VarDecl(varInt,IntType),VarDecl(varFloat,FloatType),VarDecl(varArrList,ArrayTypePointer(IntType)),VarDecl(varStr,StringType)],BoolType,Block([]))])

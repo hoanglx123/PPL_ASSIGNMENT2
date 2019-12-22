@@ -1,5 +1,0 @@
- int     varInt;
-                    float   varFloat; int varInt2; int varInt3;
-                    string  strArr[100];
-                    boolean varBool1, varBool2; 
-                

@@ -1,1 +1,0 @@
-Program([FuncDecl(Id(funcA),[VarDecl(bFlag,BoolType)],BoolType,Block([If(BinaryOp(==,Id(bFlag),BooleanLiteral(true)),Block([]),Block([VarDecl(varFloat1,FloatType),If(BinaryOp(!=,Id(bFlag),BooleanLiteral(true)),Block([VarDecl(varFloat2,FloatType)]))]))]))])

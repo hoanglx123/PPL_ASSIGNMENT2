@@ -5,7 +5,7 @@ from Visitor import Visitor
 
 
 class AST(ABC):
-    def __eq__(self, other): 
+    def __eq__(self, other):
         return self.__dict__ == other.__dict__
 
     @abstractmethod
@@ -59,7 +59,7 @@ class VoidType(Type):
 class ArrayType(Type):
     dimen:int
     eleType:Type
-        
+
     def __str__(self):
         return "ArrayType(" + str(self.eleType) + "," + str(self.dimen) + ")"
 
@@ -69,7 +69,7 @@ class ArrayType(Type):
 @dataclass
 class ArrayPointerType(Type):
     eleType:Type
-        
+
     def __str__(self):
         return "ArrayTypePointer(" + str(self.eleType) + ")"
 
@@ -97,7 +97,7 @@ class Id(LHS):
     name : str
 
     def __str__(self):
-        return  "Id(" + self.name + ")" 
+        return  "Id(" + self.name + ")"
 
     def accept(self, v, param):
         return v.visitId(self, param)
@@ -180,7 +180,7 @@ class StringLiteral(Literal):
         return v.visitStringLiteral(self, param)
 @dataclass
 class BooleanLiteral(Literal):
-    value:bool 
+    value:bool
 
     def __str__(self):
         return "BooleanLiteral(" + str(self.value).lower() + ")"
@@ -229,7 +229,7 @@ class Break(Stmt):
 
     def accept(self, v, param):
         return v.visitBreak(self, param)
-    
+
 class Continue(Stmt):
     def __str__(self):
         return "Continue()"
@@ -258,7 +258,7 @@ class Dowhile(Stmt):
     def accept(self, v, param):
         return v.visitDowhile(self, param)
 
-@dataclass    
+@dataclass
 class VarDecl(Decl,BlockMember):
     variable : str
     varType : Type
@@ -278,7 +278,7 @@ class FuncDecl(Decl):
 
     def __str__(self):
         return "FuncDecl(" + str(self.name) + ",[" +  ','.join(str(i) for i in self.param) + "]," + str(self.returnType) + "," + str(self.body) + ")"
-    
+
     def accept(self, v, param):
         return v.visitFuncDecl(self, param)
 
@@ -288,7 +288,7 @@ class Program(AST):
 
     def __str__(self):
         return "Program([" + ','.join(str(i) for i in self.decl) + "])"
-    
+
     def accept(self, v: Visitor, param):
         return v.visitProgram(self, param)
 

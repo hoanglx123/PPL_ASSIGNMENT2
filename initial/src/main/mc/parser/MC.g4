@@ -29,12 +29,12 @@ options{
 /***************************************/
 /************ Parser *******************/
 /***************************************/
-program:        declInProgram+ EOF; 
-declInProgram:  varDeclare | funcDeclare; 
+program:        declInProgram+ EOF;
+declInProgram:  varDeclare | funcDeclare;
 
-// Variable declearation 
+// Variable declearation
 varDeclare:     varType manyVar SM;
-varType:        BOOLTYPE | INTTYPE | FLOATTYPE | STRINGTYPE ; 
+varType:        BOOLTYPE | INTTYPE | FLOATTYPE | STRINGTYPE ;
 manyVar:        var (CM var)* ;
 var:            IDENTIFIER (LQB INTLIT RQB)? ;
 
@@ -44,38 +44,38 @@ returnType:     (BOOLTYPE | INTTYPE | FLOATTYPE | STRINGTYPE | VOIDTYPE) (LQB RQ
 paramList:      paramDeclare (CM paramDeclare)*;
 paramDeclare:   varType paramName;
 paramName:      IDENTIFIER (LQB RQB)?;
-blockStatement: LP contentBlockStatement? RP; 
+blockStatement: LP contentBlockStatement? RP;
 contentBlockStatement: declInFunc+;
 declInFunc:     varDeclare | statement;
 
-statement:      assignStatement 
+statement:      assignStatement
               | ifStatement
               | doWhileStatement
               | forStatement
               | blockStatement
-              | callStatement 
+              | callStatement
               | returnFunc
               | varDeclare
               ;
 
-assignStatement: (IDENTIFIER ASSOP) expr SM; 
+assignStatement: (IDENTIFIER ASSOP) expr SM;
 callStatement:   IDENTIFIER LB listExpr? RB SM;
 listExpr:        expr (CM expr)*;
-returnFunc:      KEYWORD_RETURN  expr SM; 
+returnFunc:      KEYWORD_RETURN  (expr)? SM;
 
-// If statement 
+// If statement
 ifStatement:    KEYWORD_IF (LB boolExpr RB) statement (KEYWORD_ELSE statement)?;
 
-// do-while statement 
+// do-while statement
 doWhileStatement: KEYWORD_DO blockStatement KEYWORD_WHILE (LB boolExpr RB) SM;
 
 // for statement
 forStatement:   KEYWORD_FOR (LB expr? SM boolExpr? SM expr? RB) statement;
 
-// break statement 
+// break statement
 breakStatement: KEYWORD_BREAK SM;
 
-// continue statement: 
+// continue statement:
 continueStatement: KEYWORD_CONTINUE SM;
 
 expr:        intExpr
@@ -85,7 +85,7 @@ expr:        intExpr
            | floatExpr
            ;
 
-floatExpr:              LB floatExpr RB  
+floatExpr:              LB floatExpr RB
            | <assoc=right> floatExpr ( DIVOP | MULOP | MODOP ) floatExpr
            | <assoc=right> floatExpr ( ADDOP | SUBOP ) floatExpr
            |               floatExpr ( LTHOP | LEQOP | GTHOP | GTHOP ) floatExpr
@@ -93,12 +93,12 @@ floatExpr:              LB floatExpr RB
            | <assoc=right> floatExpr ( ANDOP ) floatExpr
            | <assoc=right> floatExpr ( OROP  ) floatExpr
            | <assoc=left>  floatExpr ( ASSOP ) floatExpr
-           | FLOATLIT 
+           | FLOATLIT
            | IDENTIFIER
            | intExpr
            ;
 
-intExpr:                LB intExpr RB  
+intExpr:                LB intExpr RB
            | <assoc=right> intExpr ( DIVOP | MULOP | MODOP ) intExpr
            | <assoc=right> intExpr ( ADDOP | SUBOP ) intExpr
            |               intExpr ( LTHOP | LEQOP | GTHOP | GTHOP ) intExpr
@@ -106,26 +106,26 @@ intExpr:                LB intExpr RB
            | <assoc=right> intExpr ( ANDOP ) intExpr
            | <assoc=right> intExpr ( OROP  ) intExpr
            | <assoc=left>  intExpr ( ASSOP ) intExpr
-           | INTLIT 
+           | INTLIT
            | IDENTIFIER
            ;
 
-boolExpr:               LB boolExpr RB 
+boolExpr:               LB boolExpr RB
            | <assoc=left>           ( NOTOP ) boolExpr
            |               boolExpr ( LTHOP | LEQOP | GTHOP | GEQOP ) boolExpr
            |               boolExpr ( EQOP  | NEQOP ) boolExpr
            | <assoc=right> boolExpr ( ANDOP ) boolExpr
            | <assoc=right> boolExpr ( OROP  ) boolExpr
            | <assoc=left>  boolExpr ( ASSOP ) boolExpr
-           | BOOLLIT 
+           | BOOLLIT
            | IDENTIFIER
            | intExpr
            ;
 
-stringExpr:   IDENTIFIER ( ASSOP ) STRLIT;      
+stringExpr:   IDENTIFIER ( ASSOP ) STRLIT;
 indexExpr :   IDENTIFIER LQB intExpr RQB
             | intExpr
-            ; 
+            ;
 
 /***************************************/
 /************ Lexer  *******************/
@@ -154,7 +154,7 @@ fragment DIGIT_NONZERO:  [1-9] ;
 fragment EXPONENT:       (DIGIT+)([eE])('-'?)(DIGIT+); // Consider case: 0E0
 FLOATLIT:                (DIGIT+)*(DOT)(DIGIT+|EXPONENT)
                        | (DIGIT+) (DOT)
-                       | (EXPONENT) 
+                       | (EXPONENT)
                        ;
 
 // Boolean Literals
@@ -168,7 +168,7 @@ BOOLTYPE:   'boolean' ;
 INTTYPE:    'int'     ;
 FLOATTYPE:  'float'   ;
 STRINGTYPE: 'string'  ;
-VOIDTYPE:   'void'    ; 
+VOIDTYPE:   'void'    ;
 
 // Define operators
 ADDOP:   '+'    ;
@@ -206,5 +206,12 @@ IDENTIFIER:           (LETTER | UNDERSCORE) (LETTER | DIGIT | UNDERSCORE)*; // P
 WS : [ \t\r\n\f]+ -> skip ; // skip spaces, tabs, newlines
 
 UNCLOSE_STRING: '"' ( '\\' [btnfr"'\\] | ~[\b\t\f\r\n\\"] )* ;
-ILLEGAL_ESCAPE: '"' ('\\' ~[btnfr"'\\] | ~'\\')*;
+ILLEGAL_ESCAPE
+    : '"' ('\\' [bfrnt'"\\] | ~["\\])*? ([\\] ~[bfrnt'"\\])
+        {
+
+             raise IllegalEscape(self.text[1:])
+        }
+        //(ESC | ~[\r\n] )*  '"'
+    ;
 ERROR_CHAR: .;

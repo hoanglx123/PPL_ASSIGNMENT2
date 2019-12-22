@@ -7,7 +7,7 @@ class ASTGeneration(MCVisitor):
      # Visit a parse tree produced by MCParser#program.
     def visitProgram(self, ctx:MCParser.ProgramContext):
         declList = []
-        for declNode in ctx.declInProgram(): 
+        for declNode in ctx.declInProgram():
             declList += self.visit(declNode)
         return Program(declList)
 
@@ -15,9 +15,9 @@ class ASTGeneration(MCVisitor):
     # Visit a parse tree produced by MCParser#declInProgram.
     def visitDeclInProgram(self, ctx:MCParser.DeclInProgramContext):
         declInProgram = []
-        if ctx.varDeclare(): 
+        if ctx.varDeclare():
             declInProgram += self.visit(ctx.varDeclare())
-        else: 
+        else:
             declInProgram.append(self.visit(ctx.funcDeclare()))
         return declInProgram
 
@@ -25,13 +25,13 @@ class ASTGeneration(MCVisitor):
     def visitVarDeclare(self, ctx:MCParser.VarDeclareContext):
         result = []
         for varNode in self.visit(ctx.manyVar()):
-            # Basic type 
-            if self.visit(varNode)[1] == -1: 
-                result.append(VarDecl(self.visit(varNode)[0], self.visit(ctx.varType())))   
+            # Basic type
+            if self.visit(varNode)[1] == -1:
+                result.append(VarDecl(self.visit(varNode)[0], self.visit(ctx.varType())))
             # Array type
-            else: 
+            else:
                 result.append(VarDecl(self.visit(varNode)[0], ArrayType(self.visit(varNode)[1], self.visit(ctx.varType()))))
-        return result 
+        return result
 
 
     # Visit a parse tree produced by MCParser#varType.
@@ -47,7 +47,7 @@ class ASTGeneration(MCVisitor):
         else:
             varType = "UNKNOWN"
         return varType
-     
+
 
     # Visit a parse tree produced by MCParser#manyVar.
     def visitManyVar(self, ctx:MCParser.ManyVarContext):
@@ -56,21 +56,21 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#var.
     def visitVar(self, ctx:MCParser.VarContext):
-        """Return var with format: [varName, index] 
-                where: 
+        """Return var with format: [varName, index]
+                where:
                     + index = -1: var belongs to basic type (int, float, string, ...)
                     + index > 0 : var belongs to array type"""
         if ctx.getChildCount() > 1:
             return [ctx.IDENTIFIER().getText(), int(ctx.INTLIT().getText())]
-        else: 
+        else:
             return [ctx.IDENTIFIER().getText(), -1]
 
 
     # Visit a parse tree produced by MCParser#funcDeclare.
     def visitFuncDeclare(self, ctx:MCParser.FuncDeclareContext):
-        return FuncDecl( Id(ctx.IDENTIFIER().getText()), 
-                            self.visit(ctx.paramList()) if ctx.paramList() else [],  
-                            self.visit(ctx.returnType()), 
+        return FuncDecl( Id(ctx.IDENTIFIER().getText()),
+                            self.visit(ctx.paramList()) if ctx.paramList() else [],
+                            self.visit(ctx.returnType()),
                             self.visit(ctx.blockStatement()))
 
 
@@ -84,12 +84,12 @@ class ASTGeneration(MCVisitor):
             returnType = FloatType()
         elif ctx.STRINGTYPE():
             returnType = StringType()
-        elif ctx.VOIDTYPE(): 
+        elif ctx.VOIDTYPE():
             returnType = VoidType()
         else:
             raise ValueError("Not implemented yet.")
 
-        # Check if return type is array pointer type 
+        # Check if return type is array pointer type
         if ctx.LQB():
             returnType = ArrayPointerType(returnType)
 
@@ -104,20 +104,20 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#paramDeclare.
     def visitParamDeclare(self, ctx:MCParser.ParamDeclareContext):
-        # Basic type 
-        if self.visit(ctx.paramName())[1] == False: 
+        # Basic type
+        if self.visit(ctx.paramName())[1] == False:
             return VarDecl(self.visit(ctx.paramName())[0], self.visit(ctx.varType()))
-        # Array type 
+        # Array type
         else:
             return VarDecl(self.visit(ctx.paramName())[0], ArrayPointerType(self.visit(ctx.varType())))
 
     # Visit a parse tree produced by MCParser#paramName.
     def visitParamName(self, ctx:MCParser.ParamNameContext):
-        # Array type 
+        # Array type
         if ctx.getChildCount() > 1:
             return [ctx.IDENTIFIER().getText(), True]
-        # Basic type 
-        else: 
+        # Basic type
+        else:
             return [ctx.IDENTIFIER().getText(), False]
 
 
@@ -135,32 +135,32 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#declInFunc.
     def visitDeclInFunc(self, ctx:MCParser.DeclInFuncContext):
-        # Var declare 
-        if ctx.varDeclare(): 
+        # Var declare
+        if ctx.varDeclare():
             return self.visit(ctx.varDeclare())
         # Statement declare
-        else:  
+        else:
             return [self.visit(ctx.statement())]
 
 
     # Visit a parse tree produced by MCParser#statement.
     def visitStatement(self, ctx:MCParser.StatementContext):
-        if ctx.assignStatement(): 
+        if ctx.assignStatement():
             return self.visit(ctx.assignStatement())
-        elif ctx.ifStatement(): 
+        elif ctx.ifStatement():
             return self.visit(ctx.ifStatement())
-        elif ctx.doWhileStatement(): 
+        elif ctx.doWhileStatement():
             return self.visit(ctx.doWhileStatement())
-        elif ctx.forStatement(): 
+        elif ctx.forStatement():
             return self.visit(ctx.forStatement())
-        elif ctx.blockStatement(): 
+        elif ctx.blockStatement():
             return self.visit(ctx.blockStatement())
-        elif ctx.callStatement(): 
+        elif ctx.callStatement():
             return self.visit(ctx.callStatement())
-        elif ctx.returnFunc(): 
+        elif ctx.returnFunc():
             return self.visit(ctx.returnFunc())
-        else: 
-            return "UNKOWN_STATEMENT" 
+        else:
+            return "UNKOWN_STATEMENT"
 
 
     # Visit a parse tree produced by MCParser#assignment.
@@ -180,21 +180,23 @@ class ASTGeneration(MCVisitor):
     # Visit a parse tree produced by MCParser#listExpr.
     def visitListExpr(self, ctx:MCParser.ListExprContext):
         listExpr = []
-        for exprNode in ctx.expr(): 
+        for exprNode in ctx.expr():
             listExpr.append(self.visit(exprNode))
         return listExpr
 
 
     # Visit a parse tree produced by MCParser#returnFunc.
     def visitReturnFunc(self, ctx:MCParser.ReturnFuncContext):
-        return Return(self.visit(ctx.expr()))
-
+        if ctx.expr():
+            return Return(self.visit(ctx.expr()))
+        else:
+            return Return(None)
 
     # Visit a parse tree produced by MCParser#if_statement.
     def visitIfStatement(self, ctx:MCParser.IfStatementContext):
         expr     = self.visit(ctx.boolExpr())
         thenStmt = self.visit(ctx.statement(0))
-        if ctx.KEYWORD_ELSE(): 
+        if ctx.KEYWORD_ELSE():
             elseStmt = self.visit(ctx.statement(1))
         else:
             elseStmt = None
@@ -213,7 +215,7 @@ class ASTGeneration(MCVisitor):
         expr1 = self.visit(ctx.expr(0))
         expr2 = self.visit(ctx.boolExpr())
         expr3 = self.visit(ctx.expr(1))
-        loop  = self.visit(ctx.statement()) 
+        loop  = self.visit(ctx.statement())
         return For(expr1, expr2, expr3, loop)
 
 
@@ -240,7 +242,7 @@ class ASTGeneration(MCVisitor):
         elif ctx.indexExpr():
             return self.visit(ctx.indexExpr())
         else:
-            return "UNKNOWN_EXPR"
+            return None
 
 
     # Visit a parse tree produced by MCParser#floatExpr.
@@ -251,16 +253,21 @@ class ASTGeneration(MCVisitor):
             return Id(ctx.IDENTIFIER().getText())
         elif ctx.intExpr():
             return self.visit(ctx.intExpr())
-        else: 
+        else:
             # Expression in "(" and ")"
             if ctx.LB():
                 return self.visit(ctx.getChild(1))
             # Binary Oprand
-            elif ctx.getChildCount() == 3: 
+            elif ctx.getChildCount() == 3:
                 op        = ctx.getChild(1).getText()
                 leftExpr  = self.visit(ctx.getChild(0))
                 rightExpr = self.visit(ctx.getChild(2))
                 return BinaryOp(op, leftExpr, rightExpr)
+            # Unary Oprand
+            elif ctx.getChildCount() == 2:
+                op   = ctx.getChild(0).getText()
+                expr = self.visit(ctx.getChild(1))
+                return UnaryOp(op, expr)
             else:
                 return "UNDEFINED_EXPR"
 
@@ -271,13 +278,13 @@ class ASTGeneration(MCVisitor):
             return IntLiteral(ctx.INTLIT().getText())
         elif ctx.IDENTIFIER():
             return Id(ctx.IDENTIFIER().getText())
-        else: 
+        else:
             # Expression in "(" and ")"
             if ctx.LB():
                 # return self.visit(ctx.intExpr())
                 return self.visit(ctx.getChild(1))
             # Binary Oprand
-            elif ctx.getChildCount() == 3: 
+            elif ctx.getChildCount() == 3:
                 op        = ctx.getChild(1).getText()
                 leftExpr  = self.visit(ctx.getChild(0))
                 rightExpr = self.visit(ctx.getChild(2))
@@ -293,17 +300,17 @@ class ASTGeneration(MCVisitor):
             return Id(ctx.IDENTIFIER().getText())
         elif ctx.intExpr():
             return self.visit(ctx.intExpr())
-        else: 
+        else:
             # Expression in "(" and ")"
             if ctx.LB():
                 return self.visit(ctx.getChild(1))
             # Binary Oprand
-            elif ctx.getChildCount() == 3: 
+            elif ctx.getChildCount() == 3:
                 op        = ctx.getChild(1).getText()
                 leftExpr  = self.visit(ctx.getChild(0))
                 rightExpr = self.visit(ctx.getChild(2))
                 return BinaryOp(op, leftExpr, rightExpr)
-            else: 
+            else:
                 return "UNDEFINED_EXPR"
 
 
@@ -316,8 +323,8 @@ class ASTGeneration(MCVisitor):
 
     # Visit a parse tree produced by MCParser#indexExpr.
     def visitIndexExpr(self, ctx:MCParser.IndexExprContext):
-        if ctx.getChildCount() > 1:  
+        if ctx.getChildCount() > 1:
             idxExpr = "INDEX_BY_ARRAY_TYPE"
         else:
-            idxExpr = self.visit(ctx.intExpr()) 
+            idxExpr = self.visit(ctx.intExpr())
         return idxExpr

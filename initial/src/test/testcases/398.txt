@@ -1,9 +1,0 @@
- boolean funcA(boolean bFlag)
-                    {
-                        /* Declare variables */
-                        int varIndex; 
-                        int varIndex2; 
-
-                        return true;
-                    }             
-                

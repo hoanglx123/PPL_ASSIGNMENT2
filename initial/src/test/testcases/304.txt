@@ -1,8 +1,0 @@
- boolean funcA(int varArrList[], string varStr)
-                    {
-                        int     varInt;
-                        float   varFloat; 
-                        string  strArr[100];
-                        boolean varBool1, varBool2; 
-                    }             
-                

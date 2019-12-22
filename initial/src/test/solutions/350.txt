@@ -1,1 +1,0 @@
-Program([FuncDecl(Id(funcA),[VarDecl(varArrList,ArrayTypePointer(IntType)),VarDecl(varStr,StringType)],BoolType,Block([VarDecl(varFloat1,FloatType),VarDecl(varFloat2,FloatType),VarDecl(varBool,BoolType),BinaryOp(=,Id(varFloat1),FloatLiteral(100.0)),BinaryOp(=,Id(varFloat2),FloatLiteral(10.5)),BinaryOp(=,Id(varBool),BinaryOp(!=,Id(varFloat1),Id(varFloat2)))]))])
